@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -16,33 +16,23 @@
  */
 
 using System;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.IME;
+using Xunit;
+using ImeWlConverter.Formats.BaiduShouji;
 
-namespace Studyzy.IMEWLConverter.Test
+namespace Studyzy.IMEWLConverter.Test;
+
+public class BaiduShoujiTest : BaseTest
 {
-    [TestFixture]
-    public class BaiduShoujiTest : BaseTest
+    public BaiduShoujiTest()
     {
-        #region SetUp/Teardown
+        exporter = new BaiduShoujiExporter();
+        importer = new BaiduShoujiImporter();
+    }
 
-        [SetUp]
-        public override void InitData()
-        {
-            exporter = new BaiduShouji();
-            importer = new BaiduShouji();
-        }
+    protected override string StringData => throw new NotImplementedException();
 
-        #endregion
-
-        protected override string StringData
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        [Test]
-        public void TestExport()
-        {
-        }
+    [Fact]
+    public void TestExport()
+    {
     }
 }

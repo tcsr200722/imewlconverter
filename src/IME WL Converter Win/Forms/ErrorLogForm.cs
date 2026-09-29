@@ -15,24 +15,15 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Studyzy.IMEWLConverter
+namespace Studyzy.IMEWLConverter;
+
+public partial class ErrorLogForm : Form
 {
-    public partial class ErrorLogForm : Form
+    public ErrorLogForm(string message)
     {
-        public ErrorLogForm(string message)
-        {
-            InitializeComponent();
-            this.richTextBox1.Text = message;
-        }
+        InitializeComponent();
+        richTextBox1.Text = message;
     }
 }

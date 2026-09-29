@@ -15,25 +15,20 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Xunit;
 
-namespace ImeWlConverterCoreTest
+namespace ImeWlConverterCoreTest;
+
+public class EmojiTest
 {
-    class EmojiTest
+    [Fact]
+    public void TestGenerateEmojiFile()
     {
-        [Test]
-        public void TestGenerateEmojiFile()
-        {
-            //var sw = FileOperationHelper.WriteFile("emoji.txt", Encoding.Unicode);
+        //var sw = FileOperationHelper.WriteFile("emoji.txt", Encoding.Unicode);
 
-            var b = Encoding.UTF8.GetBytes("😀");
-            Console.WriteLine("Hex:{0:x}", b);
-        }
+        var b = Encoding.UTF8.GetBytes("😀");
+        // Output: Hex bytes of emoji
     }
 }

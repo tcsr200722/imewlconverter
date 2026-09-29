@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -16,25 +16,24 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.IME;
+using System.IO;
+using Xunit;
+using ImeWlConverter.Formats.SougouScel;
 
-namespace Studyzy.IMEWLConverter.Test
+namespace Studyzy.IMEWLConverter.Test;
+
+public class PerformanceTest
 {
-    class PerformanceTest
+    [Fact(Skip = "Performance test, run manually")]
+    [Trait("Category", "Explicit")]
+    public void TestLoadHugeNumberWL()
     {
-        [Ignore("需要的时候再启用")]
-        [Test]
-        public void TestLoadHugeNumberWL()
-        {
-            Debug.WriteLine("Start:"+ DateTime.Now.ToString());
-            IWordLibraryImport importer=new SougouPinyinScel();
-            var wls = importer.Import("Test/诗词名句大全.scel");
-            Debug.WriteLine("Load Words count:" + wls.Count);
-            Debug.WriteLine("End:"+DateTime.Now.ToString());
-        }
+        Debug.WriteLine("Start:" + DateTime.Now);
+        var importer = new SougouScelImporter();
+        using var stream = File.OpenRead("Test/诗词名句大全.scel");
+        var result = importer.ImportAsync(stream).GetAwaiter().GetResult();
+        Debug.WriteLine("Load Words count:" + result.Entries.Count);
+        Debug.WriteLine("End:" + DateTime.Now);
     }
 }

@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -15,38 +15,43 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Studyzy.IMEWLConverter.Generaters;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Helpers;
+using Xunit;
+using ImeWlConverter.Abstractions.Contracts;
+using ImeWlConverter.CodeData;
+using ImeWlConverter.Core.CodeGeneration.Generators;
 
-namespace Studyzy.IMEWLConverter.Test.GeneraterTest
+namespace Studyzy.IMEWLConverter.Test.GeneraterTest;
+
+public class ZhuyinTest
 {
-    [TestFixture]
-    class ZhuyinTest
+    private readonly ICodeGenerator generator;
+
+    public ZhuyinTest()
     {
-        private IWordCodeGenerater generater;
-        [SetUp]
-        public void SetUp()
-        {
-            generater = new ZhuyinGenerater();
-        }
-        [Test]
-        public void TestGetOneWordPinyin()
-        {
-            
-        }
-        [TestCase("曾毅", "ㄗㄥ,ㄧˋ")]
-        [TestCase("北京吃饭", "ㄅㄟˇ,ㄐㄧㄥ,ㄔ,ㄈㄢˋ")]
-        [TestCase("煤矿", "ㄇㄟˊ,ㄎㄨㄤˋ")]
-        [TestCase("故乡", "ㄍㄨˋ,ㄒㄧㄤ")]
-        public void TestGetLongWordsPinyin(string str,string py)
-        {
-            var result = generater.GetCodeOfString(str).ToCodeString(",");
-            Assert.Contains(py,result.ToArray());
-        }
+        var resources = new EmbeddedResourceProvider();
+        generator = new ZhuyinCodeGenerator(
+            new TerraPinyinCodeGenerator(
+                new PinyinCodeGenerator(
+                    new PinyinTable(new CodeTableLibrary(resources)),
+                    resources),
+                new PinyinTable(new CodeTableLibrary(resources))),
+            new ZhuyinTable(resources));
+    }
+
+    [Fact]
+    public void TestGetOneWordPinyin()
+    {
+    }
+
+    [Theory]
+    [InlineData("曾毅", "ㄗㄥ,ㄧˋ")]
+    [InlineData("北京吃饭", "ㄅㄟˇ,ㄐㄧㄥ,ㄔ,ㄈㄢˋ")]
+    [InlineData("煤矿", "ㄇㄟˊ,ㄎㄨㄤˋ")]
+    [InlineData("故乡", "ㄍㄨˋ,ㄒㄧㄤ")]
+    public void TestGetLongWordsPinyin(string str, string py)
+    {
+        var result = generator.GenerateCode(str);
+        var primaryCode = result.GetPrimaryCode(",");
+        Assert.Equal(py, primaryCode);
     }
 }

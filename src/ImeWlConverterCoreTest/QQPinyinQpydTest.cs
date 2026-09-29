@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -16,31 +16,25 @@
  */
 
 using System;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Entities;
-using Studyzy.IMEWLConverter.IME;
+using Xunit;
+using ImeWlConverter.Formats.QQPinyinQpyd;
 
-namespace Studyzy.IMEWLConverter.Test
+namespace Studyzy.IMEWLConverter.Test;
+
+public class QQPinyinQpydTest : BaseTest
 {
-    [TestFixture]
-    internal class QQPinyinQpydTest : BaseTest
+    public QQPinyinQpydTest()
     {
-        protected override string StringData
-        {
-            get { throw new NotImplementedException(); }
-        }
+        importer = new QQPinyinQpydImporter();
+    }
 
-        [SetUp]
-        public override void InitData()
-        {
-            importer = new QQPinyinQpyd();
-        }
+    protected override string StringData => throw new NotImplementedException();
 
-        [TestCase("成语.qpyd")]
-        public void TestParseQypd(string file)
-        {
-            WordLibraryList wll = importer.Import(GetFullPath(file));
-            Assert.Greater(wll.Count, 0);
-        }
+    [Theory]
+    [InlineData("成语.qpyd")]
+    public void TestParseQypd(string file)
+    {
+        var result = ImportFromFile(GetFullPath(file));
+        Assert.True(result.Entries.Count > 0);
     }
 }

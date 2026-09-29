@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -15,40 +15,36 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Entities;
-using Studyzy.IMEWLConverter.Filters;
+using Xunit;
+using ImeWlConverter.Abstractions.Models;
+using ImeWlConverter.Core.Filters;
 
-namespace Studyzy.IMEWLConverter.Test.FilterTest
+namespace Studyzy.IMEWLConverter.Test.FilterTest;
+
+public class AllFilterTest
 {
-    class AllFilterTest
+    [Theory]
+    [InlineData("123.456", true)]
+    [InlineData("abc!efg?", true)]
+    [InlineData("1《深蓝词库转换》", false)]
+    [InlineData("2大家，好", false)]
+    [InlineData("3转换成功。", false)]
+    public void ChinesePunctuationFilterTest(string word, bool isKeep)
     {
-        [TestCase("123.456",true)]
-        [TestCase("abc!efg?", true)]
-        [TestCase("1《深蓝词库转换》", false)]
-        [TestCase("2大家，好", false)]
-        [TestCase("3转换成功。", false)]
-        public void ChinesePunctuationFilterTest(string word, bool isKeep)
-        {
-            var wl = new WordLibrary();
-            wl.Word = word;
-            ChinesePunctuationFilter filter = new ChinesePunctuationFilter();
-            Assert.AreEqual(filter.IsKeep(wl), isKeep);
-        }
+        var entry = new WordEntry { Word = word };
+        var filter = new ChinesePunctuationFilter();
+        Assert.Equal(isKeep, filter.ShouldKeep(entry));
+    }
 
-        [TestCase("深蓝",true)]
-        [TestCase("深 蓝", false)]
-        [TestCase(" 深蓝", false)]
-        [TestCase("深蓝 ", false)]
-        public void SpaceFilterTest(string word,bool isKeep)
-        {
-            var wl = new WordLibrary();
-            wl.Word = word;
-            SpaceFilter filter=new SpaceFilter();
-            Assert.AreEqual(filter.IsKeep(wl), isKeep);
-        }
+    [Theory]
+    [InlineData("深蓝", true)]
+    [InlineData("深 蓝", false)]
+    [InlineData(" 深蓝", false)]
+    [InlineData("深蓝 ", false)]
+    public void SpaceFilterTest(string word, bool isKeep)
+    {
+        var entry = new WordEntry { Word = word };
+        var filter = new SpaceFilter();
+        Assert.Equal(isKeep, filter.ShouldKeep(entry));
     }
 }

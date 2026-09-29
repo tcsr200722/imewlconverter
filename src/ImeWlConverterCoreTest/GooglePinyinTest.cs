@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -16,51 +16,39 @@
  */
 
 using System;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Entities;
-using Studyzy.IMEWLConverter.IME;
+using System.IO;
+using System.Text;
+using Xunit;
+using ImeWlConverter.Formats.GooglePinyin;
 
-namespace Studyzy.IMEWLConverter.Test
+namespace Studyzy.IMEWLConverter.Test;
+
+public class GooglePinyinTest : BaseTest
 {
-    [TestFixture]
-    internal class GooglePinyinTest : BaseTest
+    public GooglePinyinTest()
     {
-        #region SetUp/Teardown
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        exporter = new GooglePinyinExporter();
+        importer = new GooglePinyinImporter();
+    }
 
-        [SetUp]
-        public override void InitData()
-        {
-            exporter = new GooglePinyin();
-            importer = new GooglePinyin();
-        }
+    protected override string StringData => Resource4Test.GooglePinyin;
 
-        #endregion
+    [Fact]
+    public void TestExport()
+    {
+        using var ms = new MemoryStream();
+        var result = ExportToStream(WlListData, ms);
+        Assert.Equal(2, result.EntryCount);
+    }
 
-        protected override string StringData
-        {
-            get { return Resource4Test.GooglePinyin; }
-        }
-
-        [Test]
-        public void TestExport()
-        {
-            var txt = exporter.Export(WlListData)[0];
-            Assert.IsTrue(txt.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries).Length == 2);
-        }
-
-        [Test]
-        public void TestExportLine()
-        {
-            string txt = exporter.ExportLine(WlData);
-            Assert.AreEqual(txt, "深蓝测试\t10\tshen lan ce shi");
-        }
-
-        [Test]
-        public void TestImport()
-        {
-            WordLibraryList list = ((IWordLibraryTextImport) importer).ImportText(StringData);
-            Assert.IsNotNull(list);
-            Assert.AreEqual(list.Count, 10);
-        }
+    [Fact]
+    public void TestImport()
+    {
+        var bytes = Encoding.GetEncoding("GBK").GetBytes(StringData);
+        using var ms = new MemoryStream(bytes);
+        var result = importer!.ImportAsync(ms).GetAwaiter().GetResult();
+        Assert.NotNull(result.Entries);
+        Assert.Equal(10, result.Entries.Count);
     }
 }

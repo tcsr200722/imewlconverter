@@ -1,4 +1,4 @@
-﻿/*
+/*
  *   Copyright © 2009-2020 studyzy(深蓝,曾毅)
 
  *   This program "IME WL Converter(深蓝词库转换)" is free software: you can redistribute it and/or modify
@@ -16,41 +16,27 @@
  */
 
 using System;
-using System.Diagnostics;
-using NUnit.Framework;
-using Studyzy.IMEWLConverter.Entities;
-using Studyzy.IMEWLConverter.IME;
+using Xunit;
+using ImeWlConverter.Formats.LingoesLd2;
 
-namespace Studyzy.IMEWLConverter.Test
+namespace Studyzy.IMEWLConverter.Test;
+
+public class Ld2ParseTest : BaseTest
 {
-    [TestFixture]
-    internal class Ld2ParseTest : BaseTest
+    public Ld2ParseTest()
     {
-        [TestCase("g.ld2")]
-        [TestCase("i.ld2")]
-        public void TestParseLd2(string file)
-        {
-            string ld2File = GetFullPath(file);
-
-            WordLibraryList reult = importer.Import(ld2File);
-
-            Assert.IsNotNull(reult);
-            Assert.Greater(reult.Count, 0);
-            //foreach (WordLibrary wordLibrary in reult)
-            //{
-            //    Debug.WriteLine(wordLibrary);
-            //}
-        }
-
-        protected override string StringData
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        [SetUp]
-        public override void InitData()
-        {
-            importer = new LingoesLd2();
-        }
+        importer = new LingoesLd2Importer();
     }
+
+    [Theory]
+    [InlineData("g.ld2")]
+    [InlineData("i.ld2")]
+    public void TestParseLd2(string file)
+    {
+        var result = ImportFromFile(GetFullPath(file));
+        Assert.NotNull(result.Entries);
+        Assert.True(result.Entries.Count > 0);
+    }
+
+    protected override string StringData => throw new NotImplementedException();
 }
